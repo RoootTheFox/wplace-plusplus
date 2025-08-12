@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         wPlace++
 // @namespace    https://rooot.gay
-// @version      0.0.3
+// @version      0.0.5
 // @description  fixes the map not loading, and adds a couple other map related QoL features :3
 // @author       rooot
-// @updateURL    https://gist.github.com/RoootTheFox/2a346d43ca9bb73b65a93ec07ebe2840/raw/be914e418b3d312a27f746af95ba17fe3402a695/wplace-fix.user.js
-// @downloadURL  https://gist.github.com/RoootTheFox/2a346d43ca9bb73b65a93ec07ebe2840/raw/be914e418b3d312a27f746af95ba17fe3402a695/wplace-fix.user.js
+// @updateURL    https://github.com/RoootTheFox/wplace-plusplus/raw/refs/heads/main/wplace++.user.js
+// @downloadURL  https://github.com/RoootTheFox/wplace-plusplus/raw/refs/heads/main/wplace++.user.js
 // @match        https://wplace.live/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=wplace.live
 // @grant        unsafeWindow
@@ -23,10 +23,10 @@ function mk_log(level) {
         case "dbg": c = "orange"; dbg = true; break;
     }
     if (dbg && !window.mk_enable_dbg) return;
-    let base_stuff = ["%c[wplacefix] %c[" + level + "]", "color: pink", "color: " + c];
+    let base_stuff = ["%c[wplace++] %c[" + level + "]", "color: pink", "color: " + c];
     let stuff = [...base_stuff, ...arguments];
     stuff.splice(base_stuff.length, 1);
-    console.log.apply("%c[wplacefix]", stuff);
+    console.log.apply("%c[wplace++]", stuff);
 }
 
 function mk_update_visibility() {
