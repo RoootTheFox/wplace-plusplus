@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         wPlace++
 // @namespace    https://rooot.gay
-// @version      0.0.7
+// @version      0.0.8
 // @description  fixes the map not loading, and adds a couple other map related QoL features :3
 // @author       rooot
 // @updateURL    https://github.com/RoootTheFox/wplace-plusplus/raw/refs/heads/main/wplace++.user.js
@@ -161,6 +161,7 @@ function mk_menu_create_button(category, title, onclick) {
             req = new Request(new_url.toString(), req);
         }
 
+        // if map loading breaks with Blue Marble, its most likely NOT skipping map requests
         if (usw.bmfetchPatch != undefined) { // blue marble compat ???
             mk_log("dbg", "ATTEMPTING BM COMPAT");
             return await usw.bmfetchPatch(usw.originalFetch, req, ...args);
@@ -255,11 +256,14 @@ function mk_menu_create_button(category, title, onclick) {
             if (bm.classList.contains("meow_menu_hidden")) {
                 mk_log("dbg", "showing bm!");
                 bm.classList.remove("meow_menu_hidden");
+                localStorage.setItem("meow_bmHidden", false);
             } else {
                 mk_log("dbg", "hiding bm!");
                 bm.classList.add("meow_menu_hidden");
+                localStorage.setItem("meow_bmHidden", true);
             }
         });
+        if (localStorage.getItem("meow_bmHidden") == "true") document.getElementById("bm-n").classList.add("meow_menu_hidden");
 
         mk_menu_create_button(cat_misc, "CLOSE THIS MENU", function () {
             mk_log("inf", "closing~");
