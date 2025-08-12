@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         wPlace++
 // @namespace    https://rooot.gay
-// @version      0.0.5
+// @version      0.0.6
 // @description  fixes the map not loading, and adds a couple other map related QoL features :3
 // @author       rooot
 // @updateURL    https://github.com/RoootTheFox/wplace-plusplus/raw/refs/heads/main/wplace++.user.js
@@ -221,7 +221,7 @@ function mk_menu_create_button(category, title, onclick) {
 
         let meow_menu_title = document.createElement("h3");
         meow_menu_title.className = "mk_menu-title";
-        meow_menu_title.innerText = "map fix v0.0.3";
+        meow_menu_title.innerText = "wPlace++ v0.0.6";
         meow_menu.appendChild(meow_menu_title);
 
         let cat_wplace = mk_menu_create_category("wplace");
