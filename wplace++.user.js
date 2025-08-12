@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         wPlace++
 // @namespace    https://rooot.gay
-// @version      0.0.6
+// @version      0.0.7
 // @description  fixes the map not loading, and adds a couple other map related QoL features :3
 // @author       rooot
 // @updateURL    https://github.com/RoootTheFox/wplace-plusplus/raw/refs/heads/main/wplace++.user.js
@@ -22,7 +22,7 @@ function mk_log(level) {
         case "wrn": c = "yellow"; break;
         case "dbg": c = "orange"; dbg = true; break;
     }
-    if (dbg && !window.mk_enable_dbg) return;
+    if (dbg && !unsafeWindow.mk_enable_dbg) return;
     let base_stuff = ["%c[wplace++] %c[" + level + "]", "color: pink", "color: " + c];
     let stuff = [...base_stuff, ...arguments];
     stuff.splice(base_stuff.length, 1);
