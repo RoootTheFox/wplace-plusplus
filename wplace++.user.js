@@ -100,6 +100,32 @@ function mk_menu_create_button(category, title, onclick) {
         }
     };
 
+    usw._meow_ui_themes = {
+        "default": {
+            display: "default (light)"
+        },
+        "ctp-mocha": {
+            display: "catppuccin mocha (dark) [beta]",
+            css: `
+    :root {
+        --color-base-100: #1e1e2e;
+        --color-base-content: white;
+        --color-base-200: #181825;
+        --color-base-300: #11111b;
+
+        /* fix buttons looking janky */
+        --fx-noise:;
+    }
+    [data-rich-colors="true"][data-sonner-toast][data-type="error"], [data-rich-colors="true"][data-sonner-toast][data-type="error"] [data-close-button] {
+        /* popups/toasts */
+        --error-bg: var(--color-base-100);
+        --error-border: var(--color-base-100);
+        --error-text: #f38ba8;
+    }
+            `
+        }
+    };
+
     usw._meow_ui = false;
 
     // in global context for now
@@ -122,6 +148,26 @@ function mk_menu_create_button(category, title, onclick) {
         current_theme.name = current_theme_id;
         return current_theme;
     }
+
+    function getUITheme() {
+        let current_theme_id = localStorage.getItem("meow_ui_theme");
+        if (current_theme_id == undefined) current_theme_id = "default";
+
+        if (!usw._meow_ui_themes.hasOwnProperty(current_theme_id)) {
+            mk_log("err", "UI THEME "+current_theme_id+" DOES NOT EXIST! falling back to default");
+            current_theme_id = "default";
+        }
+
+        let current_theme = usw._meow_ui_themes[current_theme_id];
+        current_theme.name = current_theme_id;
+        if (current_theme.css == undefined) current_theme.css = "";
+        return current_theme;
+    }
+
+    usw.setUITheme = function setUITheme(theme) {
+        localStorage.setItem("meow_ui_theme", theme);
+        document.getElementById("meow_ui_theme").innerHTML = getUITheme().css;
+    };
 
     /// FIXES BELOW ///
     usw.patches_orig = {};
@@ -245,6 +291,24 @@ function mk_menu_create_button(category, title, onclick) {
         cat_wplace.appendChild(bwa);
         cat_wplace.appendChild(meow_menu_themeselect);
 
+        // ui themes
+        let mrrp = document.createElement("br");
+        cat_wplace.appendChild(mrrp);
+        let bwaa = document.createElement("span");
+        bwaa.innerText = "set ui theme: ";
+        let meow_menu_ui_themeselect = document.createElement("select");
+        for (let theme of Object.keys(usw._meow_ui_themes)) {
+            console.log(theme);
+            let theme_option = document.createElement("option")
+            theme_option.value = theme;
+            theme_option.innerText = usw._meow_ui_themes[theme].display;
+            meow_menu_ui_themeselect.appendChild(theme_option);
+        }
+        meow_menu_ui_themeselect.onchange = (v) => { usw.setUITheme(v.srcElement.value) };
+        meow_menu_ui_themeselect.value = getUITheme().name;
+        cat_wplace.appendChild(bwaa);
+        cat_wplace.appendChild(meow_menu_ui_themeselect);
+
         mk_menu_create_button(cat_other_scripts, "toggle Blue Marble visibility", function () {
             mk_log("inf", "toggling bluemarble!");
             let bm = document.getElementById("bm-n");
@@ -270,6 +334,12 @@ function mk_menu_create_button(category, title, onclick) {
             usw._meow_ui = false;
             mk_update_visibility();
         });
+
+        /// load UI themes ///
+        let ui_style = document.createElement("style");
+        ui_style.id = "meow_ui_theme";
+        ui_style.innerHTML = getUITheme().css;
+        document.body.appendChild(ui_style);
 
         /// INJECT MENU STYLESHEET INTO DOCUMENT ///
         let style = document.createElement("style");
