@@ -79,6 +79,8 @@ function mk_menu_create_button(category, title, onclick) {
 (function() {
     const usw = unsafeWindow;
 
+    const LEFT_SIDEBAR_SELECTOR = ".absolute.left-2.top-2.z-30.flex.flex-col.gap-3";
+
     // theming stuff :3
 
     /// THEMES ARE DEFINED HERE ///
@@ -236,11 +238,11 @@ function mk_menu_create_button(category, title, onclick) {
     ui_style.innerHTML = getUITheme().css;
     document.body.appendChild(ui_style);
 
-    setTimeout(function() {
-        mk_log("inf", "WAAAAAAAAAAAAAAAAAA")
+    function injectUI() {
+        mk_log("inf", "injecting ui bwawawa :3")
 
         // find sidebar. todo: make this code run right after this loaded in
-        let left_sidebar = document.querySelector(".absolute.left-2.top-2.z-30.flex.flex-col.gap-3")
+        let left_sidebar = document.querySelector(LEFT_SIDEBAR_SELECTOR)
         let button_container = document.createElement("div");
         button_container.classList.add("max-sm");
         left_sidebar.appendChild(button_container);
@@ -411,6 +413,42 @@ function mk_menu_create_button(category, title, onclick) {
 .meow_menu_hidden { display: none; width: 0px; height: 0px; }
 `;
         document.body.appendChild(style);
+    }
 
-    }, 2000); // todo make this better lmao
+    if (document.querySelector(LEFT_SIDEBAR_SELECTOR) && false) {
+        mk_log("inf", "injecting instantly, script loaded late?")
+
+        injectUI();
+    } else {
+        mk_log("inf", "waiting for UI to load!!");
+
+        let injected = false;
+        let observer = new MutationObserver((meows, meowbserver) => {
+            for (const meow of meows) {
+                if (meow.type == "childList") {
+                    [...meow.addedNodes].filter(c => c.nodeType == Node.ELEMENT_NODE).forEach(c => {
+                        if (c.closest(LEFT_SIDEBAR_SELECTOR) && !injected) {
+                            mk_log("inf", "found sidebar, injecting!");
+                            meowbserver.disconnect();
+                            injected = true;
+                            injectUI();
+                        }
+                    });
+                }
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true, subtree: true
+        });
+
+        // just in case the observer fails
+        setTimeout(() => {
+            if (document.querySelector(LEFT_SIDEBAR_SELECTOR) && !injected) {
+                mk_log("wrn", "observer failed, this is a bug!!");
+                injectUI();
+                observer.disconnect();
+            }
+        }, 5000)
+    }
 })();
