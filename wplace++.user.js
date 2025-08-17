@@ -230,6 +230,12 @@ function mk_menu_create_button(category, title, onclick) {
         window.fetch = patchedFetch;
     }, 100); // insanely hacky but oh well. shouldn't cause a performance hit*/
 
+    /// load UI themes ///
+    let ui_style = document.createElement("style");
+    ui_style.id = "meow_ui_theme";
+    ui_style.innerHTML = getUITheme().css;
+    document.body.appendChild(ui_style);
+
     setTimeout(function() {
         mk_log("inf", "WAAAAAAAAAAAAAAAAAA")
 
@@ -334,12 +340,6 @@ function mk_menu_create_button(category, title, onclick) {
             usw._meow_ui = false;
             mk_update_visibility();
         });
-
-        /// load UI themes ///
-        let ui_style = document.createElement("style");
-        ui_style.id = "meow_ui_theme";
-        ui_style.innerHTML = getUITheme().css;
-        document.body.appendChild(ui_style);
 
         /// INJECT MENU STYLESHEET INTO DOCUMENT ///
         let style = document.createElement("style");
