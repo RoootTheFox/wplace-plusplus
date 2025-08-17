@@ -79,6 +79,8 @@ function mk_menu_create_button(category, title, onclick) {
 (function() {
     const usw = unsafeWindow;
 
+    const LEFT_SIDEBAR_SELECTOR = ".absolute.left-2.top-2.z-30.flex.flex-col.gap-3";
+
     // theming stuff :3
 
     /// THEMES ARE DEFINED HERE ///
@@ -236,11 +238,11 @@ function mk_menu_create_button(category, title, onclick) {
     ui_style.innerHTML = getUITheme().css;
     document.body.appendChild(ui_style);
 
-    setTimeout(function() {
-        mk_log("inf", "WAAAAAAAAAAAAAAAAAA")
+    function injectUI() {
+        mk_log("inf", "injecting ui bwawawa :3")
 
         // find sidebar. todo: make this code run right after this loaded in
-        let left_sidebar = document.querySelector(".absolute.left-2.top-2.z-30.flex.flex-col.gap-3")
+        let left_sidebar = document.querySelector(LEFT_SIDEBAR_SELECTOR)
         let button_container = document.createElement("div");
         button_container.classList.add("max-sm");
         left_sidebar.appendChild(button_container);
@@ -411,6 +413,25 @@ function mk_menu_create_button(category, title, onclick) {
 .meow_menu_hidden { display: none; width: 0px; height: 0px; }
 `;
         document.body.appendChild(style);
+    }
 
-    }, 2000); // todo make this better lmao
+    if (document.querySelector(LEFT_SIDEBAR_SELECTOR) && false) {
+        mk_log("inf", "injecting instantly, script loaded late?")
+
+        injectUI();
+    } else {
+        mk_log("inf", "waiting for UI to load!!");
+
+        let iv = setInterval(() => {
+            mk_log("inf", "paws");
+            if (document.querySelector(LEFT_SIDEBAR_SELECTOR)) {
+                clearInterval(iv);
+
+                setTimeout(() => {
+                    mk_log("inf", "doing delayed injection");
+                    injectUI();
+                }, 200);
+            }
+        }, 100)
+    }
 })();
