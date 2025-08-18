@@ -317,25 +317,34 @@ function mk_menu_create_button(category, title, onclick) {
         cat_wplace.appendChild(bwaa);
         cat_wplace.appendChild(meow_menu_ui_themeselect);
 
-        mk_menu_create_button(cat_other_scripts, "toggle Blue Marble visibility", function () {
-            mk_log("inf", "toggling bluemarble!");
-            let bm = document.getElementById("bm-n");
-            if (bm == undefined) {
-                mk_log("err", "bluemarble not found!");
-                return;
-            }
+        function createElementToggleButton(cat, text, sel) {
+            let lsKeyHidden = `meow_hideElement_${sel}`;
 
-            if (bm.classList.contains("meow_menu_hidden")) {
-                mk_log("dbg", "showing bm!");
-                bm.classList.remove("meow_menu_hidden");
-                localStorage.setItem("meow_bmHidden", false);
-            } else {
-                mk_log("dbg", "hiding bm!");
-                bm.classList.add("meow_menu_hidden");
-                localStorage.setItem("meow_bmHidden", true);
-            }
-        });
-        if (localStorage.getItem("meow_bmHidden") == "true") document.getElementById("bm-n").classList.add("meow_menu_hidden");
+            mk_menu_create_button(cat, text, function () {
+                mk_log("inf", "toggling element!");
+                let target = document.getElementById(sel);
+                if (target == undefined) {
+                    mk_log("err", "element not found!");
+                    return;
+                }
+                
+                if (target.classList.contains("meow_menu_hidden")) {
+                    mk_log("dbg", "showing element!");
+                    target.classList.remove("meow_menu_hidden");
+                    localStorage.setItem(lsKeyHidden, false);
+                } else {
+                    mk_log("dbg", "hiding element!");
+                    target.classList.add("meow_menu_hidden");
+                    localStorage.setItem(lsKeyHidden, true);
+                }
+            });
+
+            let target = document.getElementById(sel);
+            if (localStorage.getItem(lsKeyHidden) == "true" && target) target.classList.add("meow_menu_hidden");
+        }
+
+        createElementToggleButton(cat_other_scripts, "toggle Blue Marble visibility", "bm-n");
+        createElementToggleButton(cat_other_scripts, "toggle Overlay Pro visibility", "overlay-pro-panel");
 
         mk_menu_create_button(cat_misc, "CLOSE THIS MENU", function () {
             mk_log("inf", "closing~");
