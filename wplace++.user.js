@@ -248,11 +248,6 @@ function mk_menu_create_button(category, title, onclick) {
     }
     usw.Promise = patchedPromise;
 
-    /*setInterval(() => {
-        usw.fetch = patchedFetch;
-        window.fetch = patchedFetch;
-    }, 100); // insanely hacky but oh well. shouldn't cause a performance hit*/
-
     /// load UI themes ///
     let ui_style = document.createElement("style");
     ui_style.id = "meow_ui_theme";
@@ -262,7 +257,6 @@ function mk_menu_create_button(category, title, onclick) {
     function injectUI() {
         mk_log("inf", "injecting ui bwawawa :3")
 
-        // find sidebar. todo: make this code run right after this loaded in
         let left_sidebar = document.querySelector(LEFT_SIDEBAR_SELECTOR)
         let button_container = document.createElement("div");
         button_container.classList.add("max-sm");
@@ -442,17 +436,17 @@ function mk_menu_create_button(category, title, onclick) {
 .mk_menu_category-content button {
     margin-right: var(--meow-padding);
 }
-
-/* bluemarble support */
-.meow_menu_hidden { display: none; width: 0px; height: 0px; }
 `;
         document.body.appendChild(style);
     }
 
-    if (document.querySelector(LEFT_SIDEBAR_SELECTOR) && false) {
-        mk_log("inf", "injecting instantly, script loaded late?")
+    if (document.querySelector(LEFT_SIDEBAR_SELECTOR)) {
+        mk_log("inf", "injecting immediately, script loaded late?")
 
-        injectUI();
+        setTimeout(() => {
+            mk_log("inf", "doing delayed injection");
+            injectUI();
+        }, 150);
     } else {
         mk_log("inf", "waiting for UI to load!!");
 
