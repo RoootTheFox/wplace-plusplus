@@ -133,7 +133,11 @@ function mk_menu_create_button(category, title, onclick) {
     // in global context for now
     usw.setTheme = function setTheme(theme) {
         localStorage.setItem("meow_theme", theme);
-        unsafeWindow.location.reload();
+        if (usw._map && usw._map.setStyle) {
+            usw._map.setStyle("https://ofm.rooot.gay"+usw._meow_themes[theme].path);
+        } else {
+            usw.location.reload();
+        }
     };
 
     function getTheme() {
@@ -226,6 +230,23 @@ function mk_menu_create_button(category, title, onclick) {
     // BM compat
     usw.fetchIsPatched = true;
     window.fetchIsPatched = true;
+
+    // get map instance (thanks @cgytrus <3)
+    usw.patches_orig.Promise = usw.Promise;
+    let patchedPromise = class PawsomePromise extends Promise {
+        constructor(exec) {
+            super(exec);
+            if (exec.toString().includes("maps.wplace.live")) {
+                mk_log("inf", "caught map promise >:3c");
+                this.then((map) => {
+                    mk_log("inf", "map exposed !! >:3");
+                    usw._map = map;
+                    usw.Promise = usw.patches_orig.Promise;
+                });
+            }
+        }
+    }
+    usw.Promise = patchedPromise;
 
     /*setInterval(() => {
         usw.fetch = patchedFetch;
