@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         wPlace++
 // @namespace    https://rooot.gay
-// @version      0.1.0
+// @version      0.1.1
 // @description  fixes the map not loading, and adds a couple other map related QoL features :3
 // @author       rooot
 // @updateURL    https://github.com/RoootTheFox/wplace-plusplus/raw/refs/heads/main/wplace++.user.js
@@ -276,7 +276,7 @@ function mk_menu_create_button(category, title, onclick) {
 
         let meow_menu_title = document.createElement("h3");
         meow_menu_title.className = "mk_menu-title";
-        meow_menu_title.innerHTML = "wPlace++ " + "v0.1.0" + ' by <a class="mk_menu-dev" href="https://rooot.gay" target="_blank">rooot</a>';
+        meow_menu_title.innerHTML = "wPlace++ " + "v0.1.1" + ' by <a class="mk_menu-dev" href="https://rooot.gay" target="_blank">rooot</a>';
         meow_menu.appendChild(meow_menu_title);
 
         let cat_wplace = mk_menu_create_category("wplace");
@@ -319,28 +319,32 @@ function mk_menu_create_button(category, title, onclick) {
 
         function createElementToggleButton(cat, text, sel) {
             let lsKeyHidden = `meow_hideElement_${sel}`;
+            let hideCss = `#${sel} { display: none !important; }`;
+            let hider = document.createElement("style");
+            hider.id = lsKeyHidden;
+            hider.innerHTML = hideCss;
 
             mk_menu_create_button(cat, text, function () {
                 mk_log("inf", "toggling element!");
-                let target = document.getElementById(sel);
-                if (target == undefined) {
+                if (document.getElementById(sel) == undefined) {
                     mk_log("err", "element not found!");
+                    localStorage.setItem(lsKeyHidden, false);
                     return;
                 }
-                
-                if (target.classList.contains("meow_menu_hidden")) {
+
+                let existingHider = document.getElementById(lsKeyHidden);
+                if (existingHider) {
                     mk_log("dbg", "showing element!");
-                    target.classList.remove("meow_menu_hidden");
+                    existingHider.parentNode.removeChild(existingHider);
                     localStorage.setItem(lsKeyHidden, false);
                 } else {
                     mk_log("dbg", "hiding element!");
-                    target.classList.add("meow_menu_hidden");
+                    document.body.appendChild(hider);
                     localStorage.setItem(lsKeyHidden, true);
                 }
             });
 
-            let target = document.getElementById(sel);
-            if (localStorage.getItem(lsKeyHidden) == "true" && target) target.classList.add("meow_menu_hidden");
+            if (localStorage.getItem(lsKeyHidden) == "true") document.body.appendChild(hider);
         }
 
         createElementToggleButton(cat_other_scripts, "toggle Blue Marble visibility", "bm-n");
