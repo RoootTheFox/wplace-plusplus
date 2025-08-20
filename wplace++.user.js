@@ -135,6 +135,7 @@ function mk_menu_create_button(category, title, onclick) {
         localStorage.setItem("meow_theme", theme);
         if (usw._map && usw._map.setStyle) {
             usw._map.setStyle("https://ofm.rooot.gay"+usw._meow_themes[theme].path);
+            usw._map.fire("style.load");
         } else {
             usw.location.reload();
         }
