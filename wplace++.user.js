@@ -255,10 +255,7 @@ function mk_menu_create_button(category, title, onclick) {
     document.body.appendChild(ui_style);
 
     function createButton() {
-        if (document.getElementById("mk_btn")) {
-            mk_log("inf", "button already exists");
-            return;
-        }
+        if (document.getElementById("mk_btn")) return;
 
         mk_log("inf", "creating button");
         let left_sidebar = document.querySelector(LEFT_SIDEBAR_SELECTOR)
