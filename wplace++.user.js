@@ -182,7 +182,6 @@ function mk_menu_create_button(category, title, onclick) {
     // hook fetch :3
     usw.patches_orig.fetch = usw.fetch;
     usw.originalFetch = window.fetch; // different context
-    usw.sexfetch = window.fetch; // different context
     let patchedFetch = async function(req, ...args) {
         let url;
         let req_is_string = typeof req == "string";
@@ -255,9 +254,13 @@ function mk_menu_create_button(category, title, onclick) {
     ui_style.innerHTML = getUITheme().css;
     document.body.appendChild(ui_style);
 
-    function injectUI() {
-        mk_log("inf", "injecting ui bwawawa :3")
+    function createButton() {
+        if (document.getElementById("mk_btn")) {
+            mk_log("inf", "button already exists");
+            return;
+        }
 
+        mk_log("inf", "creating button");
         let left_sidebar = document.querySelector(LEFT_SIDEBAR_SELECTOR)
         let button_container = document.createElement("div");
         button_container.classList.add("max-sm");
@@ -271,6 +274,15 @@ function mk_menu_create_button(category, title, onclick) {
             mk_update_visibility();
         }
         button_container.appendChild(button);
+        // sparkles icon
+        let svg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" style="scale:.75" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 16v4M6 4v4m1 10H3M8 6H4m9-2 1.7528 4.4444c.1879.4764.2819.7147.4258.9155.1275.1781.2834.334.4615.4615.2008.1439.4391.2379.9155.4258L21 12l-4.4444 1.7528c-.4764.1879-.7147.2819-.9155.4258a1.9976 1.9976 0 0 0-.4615.4615c-.1439.2008-.2379.4391-.4258.9155L13 20l-1.7528-4.4444c-.1879-.4764-.2819-.7147-.4258-.9155a1.9976 1.9976 0 0 0-.4615-.4615c-.2008-.1439-.439-.2379-.9155-.4258L5 12l4.4444-1.7528c.4764-.1879.7147-.2819.9155-.4258a1.9987 1.9987 0 0 0 .4615-.4615c.1439-.2008.2379-.439.4258-.9155L13 4Z"/></svg>`;
+        button.innerHTML = svg;
+    }
+
+    function injectUI() {
+        mk_log("inf", "injecting ui bwawawa :3");
+
+        createButton();
 
         // close UI on ESC
         document.body.addEventListener('keydown', function(e) {
@@ -279,10 +291,6 @@ function mk_menu_create_button(category, title, onclick) {
                 mk_update_visibility();
             }
         });
-
-        // sparkles icon
-        let svg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" style="scale:.75" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 16v4M6 4v4m1 10H3M8 6H4m9-2 1.7528 4.4444c.1879.4764.2819.7147.4258.9155.1275.1781.2834.334.4615.4615.2008.1439.4391.2379.9155.4258L21 12l-4.4444 1.7528c-.4764.1879-.7147.2819-.9155.4258a1.9976 1.9976 0 0 0-.4615.4615c-.1439.2008-.2379.4391-.4258.9155L13 20l-1.7528-4.4444c-.1879-.4764-.2819-.7147-.4258-.9155a1.9976 1.9976 0 0 0-.4615-.4615c-.2008-.1439-.439-.2379-.9155-.4258L5 12l4.4444-1.7528c.4764-.1879.7147-.2819.9155-.4258a1.9987 1.9987 0 0 0 .4615-.4615c.1439-.2008.2379-.439.4258-.9155L13 4Z"/></svg>`;
-        button.innerHTML = svg;
 
         // build the UI (this will be hidden by default)
         let meow_menu = document.createElement("div");
@@ -439,28 +447,26 @@ function mk_menu_create_button(category, title, onclick) {
 }
 `;
         document.body.appendChild(style);
+
+        // something *really* likes getting rid of our button
+        setInterval(() => {
+            createButton();
+        }, 150);
     }
 
     if (document.querySelector(LEFT_SIDEBAR_SELECTOR)) {
-        mk_log("inf", "injecting immediately, script loaded late?")
-
-        setTimeout(() => {
-            mk_log("inf", "doing delayed injection");
-            injectUI();
-        }, 150);
+        mk_log("inf", "injecting immediately, script loaded late?");
+        
+        injectUI();
     } else {
         mk_log("inf", "waiting for UI to load!!");
 
         let iv = setInterval(() => {
-            mk_log("inf", "paws");
+            mk_log("dbg", "paws");
             if (document.querySelector(LEFT_SIDEBAR_SELECTOR)) {
                 clearInterval(iv);
-
-                setTimeout(() => {
-                    mk_log("inf", "doing delayed injection");
-                    injectUI();
-                }, 200);
+                injectUI();
             }
-        }, 100)
+        }, 100);
     }
 })();
