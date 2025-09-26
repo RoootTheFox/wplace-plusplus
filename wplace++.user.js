@@ -281,7 +281,7 @@ async function meowHash(text) {
     let patchedPromise = class PawsomePromise extends Promise {
         constructor(exec) {
             super(exec);
-            if (exec.toString().includes("maps.wplace.live")) {
+            if (exec.toString().includes("touchZoomRotate.disableRotation")) {
                 mk_log("inf", "caught map promise >:3c");
                 this.then((map) => {
                     mk_log("inf", "map exposed !! >:3");
