@@ -97,6 +97,10 @@ async function meowHash(text) {
         "95bda61d456f8ef526717c7dc6eecd4649da7a57": {
             name: "smallPlop",
             description: "plays when you abort painting"
+        },
+        "ac8b0b71a00e2fe42b4a1fa335d36c149d149d43": {
+            name: "notification1",
+            description: "plays when your charges are full"
         }
     };
     // theming stuff :3
