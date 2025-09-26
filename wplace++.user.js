@@ -281,7 +281,8 @@ async function meowHash(text) {
     let patchedPromise = class PawsomePromise extends Promise {
         constructor(exec) {
             super(exec);
-            if (exec.toString().includes("touchZoomRotate.disableRotation")) {
+            let xstr= exec.toString();
+            if (xstr.includes("touchZoomRotate.disableRotation") || (xstr.includes("styledata") && exec_string.includes("poi_r20"))) {
                 mk_log("inf", "caught map promise >:3c");
                 this.then((map) => {
                     mk_log("inf", "map exposed !! >:3");
