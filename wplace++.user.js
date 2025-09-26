@@ -402,9 +402,7 @@ async function meowHash(text) {
         // audio/sfx muting
         function createSFXToggle(cat, sfx, desc) {
             let input = document.createElement("input");
-            input.id = `meow-sfx-${sfx}-toggle`;
-            input.name = sfx;
-            input.type = "checkbox";
+            [input.id, input.name, input.type] = [`meow-sfx-${sfx}-toggle`, sfx, "checkbox"];
             if (isMuted(sfx)) input.checked = true;
             input.onchange = function(e) {
                 let [sfx, state] = [e.target.name, e.target.checked];
@@ -413,8 +411,7 @@ async function meowHash(text) {
             }
 
             let label = document.createElement("label");
-            label.for = input.id;
-            label.innerText = ` ${sfx} - ${desc}`;
+            [label.for, label.innerText] = [input.id, ` ${sfx} - ${desc}`];
             cat.appendChild(input);
             cat.appendChild(label);
             cat.appendChild(document.createElement("br"));
@@ -427,13 +424,11 @@ async function meowHash(text) {
             createSFXToggle(cat_audio, AUDIO_HASHES[hash].name, AUDIO_HASHES[hash].description);
         }
 
-
         function createElementToggleButton(cat, text, sel) {
             let lsKeyHidden = `meow_hideElement_${sel}`;
             let hideCss = `#${sel} { display: none !important; }`;
             let hider = document.createElement("style");
-            hider.id = lsKeyHidden;
-            hider.innerHTML = hideCss;
+            [hider.id, hider.innerHTML] = [lsKeyHidden, hideCss];
 
             mk_menu_create_button(cat, text, function () {
                 mk_log("inf", "toggling element!");
