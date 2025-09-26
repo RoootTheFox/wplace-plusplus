@@ -360,6 +360,7 @@ async function meowHash(text) {
         meow_menu.appendChild(meow_menu_title);
 
         let cat_wplace = mk_menu_create_category("wplace");
+        let cat_audio = mk_menu_create_category("audio");
         let cat_other_scripts = mk_menu_create_category("other");
         let cat_misc = mk_menu_create_category("misc");
 
@@ -396,6 +397,36 @@ async function meowHash(text) {
         meow_menu_ui_themeselect.value = getUITheme().name;
         cat_wplace.appendChild(bwaa);
         cat_wplace.appendChild(meow_menu_ui_themeselect);
+
+
+        // audio/sfx muting
+        function createSFXToggle(cat, sfx, desc) {
+            let input = document.createElement("input");
+            input.id = `meow-sfx-${sfx}-toggle`;
+            input.name = sfx;
+            input.type = "checkbox";
+            if (isMuted(sfx)) input.checked = true;
+            input.onchange = function(e) {
+                let [sfx, state] = [e.target.name, e.target.checked];
+                mk_log("inf", "setting sfx", sfx, "to mute state", state);
+                setMuted(sfx, state);
+            }
+
+            let label = document.createElement("label");
+            label.for = input.id;
+            label.innerText = ` ${sfx} - ${desc}`;
+            cat.appendChild(input);
+            cat.appendChild(label);
+            cat.appendChild(document.createElement("br"));
+        }
+
+        let sfxMuteInfo = document.createElement("p");
+        sfxMuteInfo.innerText = "mute sound effects: ";
+        cat_audio.appendChild(sfxMuteInfo);
+        for (let hash of Object.keys(AUDIO_HASHES)) {
+            createSFXToggle(cat_audio, AUDIO_HASHES[hash].name, AUDIO_HASHES[hash].description);
+        }
+
 
         function createElementToggleButton(cat, text, sel) {
             let lsKeyHidden = `meow_hideElement_${sel}`;
