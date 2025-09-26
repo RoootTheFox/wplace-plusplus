@@ -75,12 +75,30 @@ function mk_menu_create_button(category, title, onclick) {
     return button;
 }
 
+async function meowHash(text) {
+    const ti = new TextEncoder();
+    return text.length < 8192 ? Array.from(new Uint8Array(await window.crypto.subtle.digest("SHA-1", ti.encode(text)))).map((b) => b.toString(16).padStart(2, "0")).join("") : "wah";
+}
+
 /// START OF ACTUAL USERSCRIPT ///
 (function() {
     const usw = unsafeWindow;
 
     const LEFT_SIDEBAR_SELECTOR = ".absolute.left-2.top-2.z-30.flex.flex-col.gap-3";
 
+    // might add more audio soon :tm:
+    const AUDIO_HASHES = {
+        // paint
+        "83645da1b9fb56c6ef7e237baee54ce182eb3147": {
+            name: "plop",
+            description: "plays every time you place a pixel"
+        },
+        // abort paint
+        "95bda61d456f8ef526717c7dc6eecd4649da7a57": {
+            name: "smallPlop",
+            description: "plays when you abort painting"
+        }
+    };
     // theming stuff :3
 
     /// THEMES ARE DEFINED HERE ///
@@ -176,6 +194,29 @@ function mk_menu_create_button(category, title, onclick) {
         document.getElementById("meow_ui_theme").innerHTML = getUITheme().css;
     };
 
+    usw.setMuted = function setMuted(audioName, mute) {
+        let muted_audios = localStorage.getItem("meow_muted_audio");
+        if (muted_audios == undefined) muted_audios = "";
+
+        let muted = muted_audios.split(",");
+        if (mute) {
+            if (!muted.includes(audioName)) muted.push(audioName);
+        } else {
+            let i = muted.indexOf(audioName);
+            muted.splice(i, 1);
+        }
+
+        localStorage.setItem("meow_muted_audio", muted);
+    }
+
+    function isMuted(audioName) {
+        // putting an array into localStorage causes it to get converted into a string. grr >:c
+        let muted_audios = localStorage.getItem("meow_muted_audio");
+        if (muted_audios == undefined) muted_audios = "";
+
+        return muted_audios.split(",").includes(audioName);
+    }
+
     /// FIXES BELOW ///
     usw.patches_orig = {};
 
@@ -247,6 +288,24 @@ function mk_menu_create_button(category, title, onclick) {
         }
     }
     usw.Promise = patchedPromise;
+
+    // patch audio play for 
+    Audio.prototype.original_play = Audio.prototype.play;
+    Audio.prototype.play = async function() {
+        let hash = await meowHash(this.src)
+        mk_log("dbg", "audio hash", hash);
+
+        if (AUDIO_HASHES.hasOwnProperty(hash)) {
+            if (!isMuted(AUDIO_HASHES[hash].name)) {
+                return this.original_play();
+            } else {
+                return null;
+            }
+        } else {
+            mk_log("wrn", "audio", hash, "is unknown (you can probably ignore this)");
+            return this.original_play();
+        }
+    }
 
     /// load UI themes ///
     let ui_style = document.createElement("style");
